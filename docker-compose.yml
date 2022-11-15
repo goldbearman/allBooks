@@ -1,0 +1,23 @@
+version: "3.9"
+services:
+  redis:
+    image: redis
+    volumes:
+      - ./data:/data
+  book_api:
+    build: ./bookApi
+    ports:
+      - 81:3002
+    environment:
+      - PORT=3002
+  counter:
+    build: ./counter
+    ports:
+      - 80:3001
+    environment:
+      - PORT=3001
+      - REDIS_URL=redis://redis
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    depends_on:
+      - redis

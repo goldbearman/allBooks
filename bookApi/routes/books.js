@@ -56,8 +56,8 @@ router.get('/:id', async (req, res) => {
       await axios.post(`http://host.docker.internal/counter/${id}/incr`)
       const resp = await axios.get(`http://host.docker.internal/counter/${id}`)
       await res.render('book/view', { title: 'Book', book: books[idx], count: resp.data });
-    }catch (err){
-      console.log('Неверный запрос!');
+    } catch (err) {
+      await res.render('book/view', { title: 'Book', book: books[idx], count: 0 });
     }
   } else {
     res.redirect('/404')
@@ -82,7 +82,6 @@ router.post('/update/:id', (req, res) => {
   const { title, description } = req.body;
   const idx = books.findIndex(el => el.id === id)
 
-  console.log('update')
   if (idx !== -1) {
     books[idx] = {
       ...books[idx], title, description,
@@ -98,9 +97,7 @@ router.post('/delete/:id', (req, res) => {
   const { id } = req.params;
   const idx = books.findIndex(el => el.id === id)
 
-  console.log('post')
   if (idx !== -1) {
-    console.log('if')
     books.splice(idx, 1);
     res.redirect('/api/books')
   } else {

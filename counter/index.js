@@ -13,14 +13,12 @@ const client = redis.createClient({url: REDIS_URL});
 })();
 
 app.get('/counter/:bookId', async (req, res) => {
-  console.log('get');
   const {bookId} = req.params;
   const value = await client.get(bookId);
   await res.json(value ? value : 0);
 });
 
 app.post('/counter/:bookId/incr', async (req, res) => {
-  console.log('post');
   const {bookId} = req.params;
   try {
     const coun = await client.incr(bookId);
@@ -31,5 +29,4 @@ app.post('/counter/:bookId/incr', async (req, res) => {
 });
 
 app.listen(PORT,()=>{
-  console.log(`port:${PORT}`);
 });

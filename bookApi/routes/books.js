@@ -57,7 +57,8 @@ router.get('/:id', async (req, res) => {
       const resp = await axios.get(`http://host.docker.internal/counter/${id}`)
       await res.render('book/view', { title: 'Book', book: books[idx], count: resp.data });
     } catch (err) {
-      await res.render('book/view', { title: 'Book', book: books[idx], count: 0 });
+      await res.render('book/view', { title: 'Book', book: books[idx], count: "подсчитывается..." });
+      console.log(err);
     }
   } else {
     res.redirect('/404')

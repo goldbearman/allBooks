@@ -1,2 +1,5 @@
 /bookApi/node_modules/
 /counter/node_modules/
+.idea
+/bookApi/.idea
+/counter/.idea

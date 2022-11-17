@@ -1,0 +1,130 @@
+use mongo
+'switched to db mongo'
+
+db.createCollection("users")
+{ ok: 1 }
+
+db.dropDatabase()
+{ ok: 1, dropped: 'mongo' }
+
+db.createCollection("books")
+{ ok: 1 }
+
+db.books.insertOne({
+  title: "Мастер и Маргарита",
+  description: "Это вечная книга",
+  authors: "Михаил Булгаков"
+})
+{ acknowledged: true,
+  insertedId: ObjectId("6375e1a72927c8dd7b6f6f93") }
+
+db.books.insertOne({
+  title: "Маленький принц",
+  description: "«Маленький принц» актуален для любого возраста",
+  authors: "Антуан де Сент-Экзюпери"
+})
+{ acknowledged: true,
+  insertedId: ObjectId("6375e1cf2927c8dd7b6f6f94") }
+
+db.books.find()
+{ _id: ObjectId("6375e1a72927c8dd7b6f6f93"),
+  title: 'Мастер и Маргарита',
+  description: 'Это вечная книга',
+  authors: 'Михаил Булгаков' }
+{ _id: ObjectId("6375e1cf2927c8dd7b6f6f94"),
+  title: 'Маленький принц',
+  description: '«Маленький принц» актуален для любого возраста',
+  authors: 'Антуан де Сент-Экзюпери' }
+
+db.books.insertOne({
+  title: "Война и мир",
+  description: "Великий роман",
+  authors: "Лев Толстой"
+})
+{ acknowledged: true,
+  insertedId: ObjectId("6375e2bd2927c8dd7b6f6f95") }
+
+db.books.find({title:"Война и мир"})
+{ _id: ObjectId("6375e2bd2927c8dd7b6f6f95"),
+  title: 'Война и мир',
+  description: 'Великий роман',
+  authors: 'Лев Толстой' }
+
+db.books.updateOne({_id: ObjectId("6375e1a72927c8dd7b6f6f93")}, {$set: {description:"Ничего не понятно!",authors:"Вася Пупкин"}})
+{ acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0 }
+
+db.books.find()
+{ _id: ObjectId("6375e1a72927c8dd7b6f6f93"),
+  title: 'Мастер и Маргарита',
+  description: 'Ничего не понятно!',
+  authors: 'Вася Пупкин' }
+{ _id: ObjectId("6375e1cf2927c8dd7b6f6f94"),
+  title: 'Маленький принц',
+  description: '«Маленький принц» актуален для любого возраста',
+  authors: 'Антуан де Сент-Экзюпери' }
+{ _id: ObjectId("6375e2bd2927c8dd7b6f6f95"),
+  title: 'Война и мир',
+  description: 'Великий роман',
+  authors: 'Лев Толстой' }
+
+db.books.updateOne({_id: ObjectId("6375e1a72927c8dd7b6f6f93")}, {$unset: {description:"Ничего не понятно!"}})
+{ acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0 }
+
+db.books.deleteOne({_id: ObjectId("6375e1a72927c8dd7b6f6f93")})
+{ acknowledged: true, deletedCount: 1 }
+
+db.books.find()
+{ _id: ObjectId("6375e1cf2927c8dd7b6f6f94"),
+  title: 'Маленький принц',
+  description: '«Маленький принц» актуален для любого возраста',
+  authors: 'Антуан де Сент-Экзюпери' }
+{ _id: ObjectId("6375e2bd2927c8dd7b6f6f95"),
+  title: 'Война и мир',
+  description: 'Великий роман',
+  authors: 'Лев Толстой' }
+{ _id: ObjectId("6375e5402927c8dd7b6f6f96"),
+  title: 'Маленький принц',
+  description: '«Маленький принц» актуален для любого возраста',
+  authors: 'Антуан де Сент-Экзюпери' }
+
+
+db.books.insertMany(
+[
+  {title: "Мастер и Маргарита",
+  description: "Это вечная книга",
+  authors: "Михаил Булгаков"
+  },{title: 'Маленький принц',
+  description: '«Маленький принц» актуален для любого возраста',
+  authors: 'Антуан де Сент-Экзюпери'},
+  {title: 'Война и мир',
+  description: 'Великий роман',
+  authors: 'Лев Толстой'
+}])
+{ acknowledged: true,
+  insertedIds:
+   { '0': ObjectId("6375fec32927c8dd7b6f6f97"),
+     '1': ObjectId("6375fec32927c8dd7b6f6f98"),
+     '2': ObjectId("6375fec32927c8dd7b6f6f99") } }
+
+db.books.find().sort({title:1})
+{ _id: ObjectId("6375fec32927c8dd7b6f6f99"),
+  title: 'Война и мир',
+  description: 'Великий роман',
+  authors: 'Лев Толстой' }
+{ _id: ObjectId("6375fec32927c8dd7b6f6f98"),
+  title: 'Маленький принц',
+  description: '«Маленький принц» актуален для любого возраста',
+  authors: 'Антуан де Сент-Экзюпери' }
+{ _id: ObjectId("6375fec32927c8dd7b6f6f97"),
+  title: 'Мастер и Маргарита',
+  description: 'Это вечная книга',
+  authors: 'Михаил Булгаков' }
+

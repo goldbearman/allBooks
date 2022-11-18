@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 
 const errorMiddleware = require('./middleware/error');
 
@@ -17,5 +18,15 @@ app.use('/api/books', apiBooksRouter);
 
 app.use(errorMiddleware);
 
+async function start(PORT,UrlDB){
+  try{
+    await mongoose.connect(UrlDB);
+    app.listen(PORT);
+  }catch (e){
+    console.log(e);
+  }
+}
+
+const UrlDB = process.env.UrlDB;
 const PORT = process.env.PORT || 3002;
-app.listen(PORT);
+start(PORT,UrlDB);

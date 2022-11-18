@@ -1,7 +1,6 @@
 const express = require('express');
 const redis = require('redis');
 
-
 const PORT = process.env.PORT || 3001;
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost';
 

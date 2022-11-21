@@ -32,7 +32,10 @@ const fileMulter = require('../middleware/bookfile')
 router.get('/', async (req, res) => {
   // const { books } = stor;
   try {
+    const book = new Book({title:"df", description:"dfd",authors:"dfsdf"});
+    await book.save();
     const books = await Book.find().select('-__v');
+    console.log(`/ ${books}`)
     res.render('book/index', {title: 'Books', books: books});
   } catch (e) {
     res.status(500).json(e);
@@ -70,21 +73,23 @@ router.get('/:id', async (req, res) => {
 });
 
 router.get('/create', (req, res) => {
-  res.render('book/create', {title: 'Create book', book: {}});
+  console.log('get create')
+  // res.render('book/create', {title: 'Create book', book: {}});
 });
 
 router.post('/create', async (req, res) => {
   // const {books} = stor;
-  const {title, description} = req.body;
-  const book = new Book({title, description});
-  // books.push(book);
-
-  try {
-    await book.save();
-    res.redirect('/api/books');
-  } catch (e) {
-    res.status(500).json(e);
-  }
+  await console.log('post create')
+  // const {title, description} = req.body;
+  // const book = new Book({title, description});
+  // // books.push(book);
+  //
+  // try {
+  //   await book.save();
+  //   res.redirect('/api/books');
+  // } catch (e) {
+  //   res.status(500).json(e);
+  // }
 });
 
 
@@ -120,7 +125,7 @@ router.post('/delete/:id', async (req, res) => {
   // const {books} = stor;
   const {id} = req.params;
   // const idx = books.findIndex(el => el.id === id)
-
+  console.log(id);
   try {
     await Book.deleteOne({_id: id})
     await res.redirect('/api/books')

@@ -11,7 +11,7 @@ const bookSchema = new Schema({
   },
   authors: {
     type:String,
-    required:true
+    default: ""
   },
   favorite: {
     type:String,
@@ -19,11 +19,11 @@ const bookSchema = new Schema({
   },
   fileCover: {
     type:String,
-    required:true
+    default: ""
   },
   fileName: {
     type:String,
-    required:true
+    default: ""
   },
 })
 

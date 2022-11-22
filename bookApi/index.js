@@ -20,7 +20,13 @@ app.use(errorMiddleware);
 
 async function start(PORT, UrlDB) {
   try {
-    await mongoose.connect(UrlDB);
+    await mongoose.connect(UrlDB, {
+      user: process.env.DB_USERNAME || 'root',
+      pass: process.env.DB_USERNAME || 'example',
+      dbName: process.env.DB_NAME || 'book_database',
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
     app.listen(PORT);
   } catch (e) {
     console.log(e);

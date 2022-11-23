@@ -17,7 +17,6 @@
         <tbody>
 
         <% books.map((el, idx)=>{ %>
-            <% console.log(el._id.toString()) %>
             <tr>
                 <th scope="row"><%= idx + 1 %></th>
                 <td><%= el.title %></td>
@@ -25,7 +24,7 @@
                     <a class="btn btn-sm btn-success" href="/api/books/<%= el.id %>">
                         <i class="fa fa-eye" aria-hidden="true"></i>
                     </a>
-                    <a class="btn btn-sm btn-primary" href="/api/books/update/<%= el.id %>">
+                    <a class="btn btn-sm btn-primary" href="/api/books/update/<%= el._id.toString() %>">
                         <i class="fa fa-pencil" aria-hidden="true"></i>
                     </a>
                     <form action="/api/books/delete/<%= el._id.toString() %>" method="POST" class="d-inline">

@@ -24,10 +24,10 @@
                     <a class="btn btn-sm btn-success" href="/api/books/<%= el.id %>">
                         <i class="fa fa-eye" aria-hidden="true"></i>
                     </a>
-                    <a class="btn btn-sm btn-primary" href="/api/books/update/<%= el._id.toString() %>">
+                    <a class="btn btn-sm btn-primary" href="/api/books/<%= el._id.toString()%>/update">
                         <i class="fa fa-pencil" aria-hidden="true"></i>
                     </a>
-                    <form action="/api/books/delete/<%= el._id.toString() %>" method="POST" class="d-inline">
+                    <form action="/api/books/<%= el._id.toString() %>/delete" method="POST" class="d-inline">
                         <button class="btn btn-sm btn-danger">
                             <i class="fa fa-trash" aria-hidden="true"></i>
                         </button>

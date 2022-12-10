@@ -1,19 +1,30 @@
 const express = require('express');
 const mongoose = require('mongoose');
 
+const session = require('express-session')
+const passport = require('passport')
+
 const errorMiddleware = require('./middleware/error');
+
+
 
 const indexRouter = require('./routes/index');
 const apiRouter = require('./routes/apiBooks');
+const apiUser = require('./routes/user');
 const apiBooksRouter = require('./routes/books');
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 
+app.use(session({ secret: 'SECRET'}));
+app.use(passport.initialize())
+app.use(passport.session())
+
 
 app.use('/', indexRouter);
 app.use('/api', apiRouter);
+app.use('/api/user', apiUser);
 app.use('/api/books', apiBooksRouter);
 
 app.use(errorMiddleware);

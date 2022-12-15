@@ -9,7 +9,7 @@ const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
 
 verifyPassword = (user, password) => {
-  return user.password === password
+    return bcrypt.compareSync(password, user.password);
 };
 
 const verify = (username, password, done) => {
@@ -64,15 +64,12 @@ router.get('/signup', (req, res) => {
 router.post('/login',
   passport.authenticate('local', {failureRedirect: '/api/user/login'}),
   async (req, res) => {
-    console.log("req.user: ", req.user)
     res.redirect('/api/user')
   });
 
 router.post('/signup', async (req, res, next) => {
   try {
     const {username, password, displayName, email} = req.body;
-    console.log('req', req.body);
-    console.log('pas', username, password, displayName, email);
     const hash = await bcrypt.hash(password, 10);
     const user = new User({username, password: hash, displayName, emails: email});
     await user.save();
@@ -83,7 +80,6 @@ router.post('/signup', async (req, res, next) => {
       res.redirect('/api/user');
     });
   } catch (e) {
-    console.log(e);
     res.status(500).send('Something broke!')
   }
 });

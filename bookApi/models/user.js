@@ -11,11 +11,11 @@ const bookSchema = new Schema({
   },
   displayName: {
     type:String,
-    default: ""
+    required:true
   },
   emails: {
     type:String,
-    default: ""
+    required:true
   },
 });
 

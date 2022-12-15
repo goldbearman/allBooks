@@ -1,6 +1,8 @@
 const exptress = require('express');
 const router = exptress.Router();
 
+const bcrypt = require('bcrypt');
+
 const User = require('../models/user')
 
 const passport = require('passport')
@@ -61,36 +63,36 @@ router.get('/signup', (req, res) => {
 
 router.post('/login',
   passport.authenticate('local', {failureRedirect: '/api/user/login'}),
-  (req, res) => {
+  async (req, res) => {
     console.log("req.user: ", req.user)
     res.redirect('/api/user')
-  })
-
-router.post('/signup', function(req, res, next) {
-  let salt = crypto.randomBytes(16);
-  crypto.pbkdf2(req.body.password, salt, 310000, 32, 'sha256', function(err, hashedPassword) {
-    if (err) { return next(err); }
-    db.run('INSERT INTO users (username, hashed_password, salt) VALUES (?, ?, ?)', [
-      req.body.username,
-      hashedPassword,
-      salt
-    ], function(err) {
-      if (err) { return next(err); }
-      var user = {
-        id: this.lastID,
-        username: req.body.username
-      };
-      req.login(user, function(err) {
-        if (err) { return next(err); }
-        res.redirect('/');
-      });
-    });
   });
+
+router.post('/signup', async (req, res, next) => {
+  try {
+    const {username, password, displayName, email} = req.body;
+    console.log('req', req.body);
+    console.log('pas', username, password, displayName, email);
+    const hash = await bcrypt.hash(password, 10);
+    const user = new User({username, password: hash, displayName, emails: email});
+    await user.save();
+    req.login(user, function (err) {
+      if (err) {
+        return next(err);
+      }
+      res.redirect('/api/user');
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).send('Something broke!')
+  }
 });
 
 router.get('/logout', (req, res) => {
-  req.logout(function(err) {
-    if (err) { return next(err); }
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
     res.redirect('/api/user')
   });
 });
@@ -107,6 +109,3 @@ router.get('/me',
   }
 )
 module.exports = router;
-
-console.log(crypto.getHashes());
-console.log(crypto.getCiphers());

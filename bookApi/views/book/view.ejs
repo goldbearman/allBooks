@@ -49,14 +49,15 @@
     </div>
 </div>
 
+
+
 <script>
+
     const roomName = location.pathname.split('/').pop();
     const socket = io.connect('/', {query: `roomName=${roomName}`});
-    console.log(roomName);
 
     const inputText     = document.querySelector('#text');
     const sendRoom      = document.querySelector('#send-room');
-    const userName      = "Vasia";
     const boxList       = document.querySelector('#list');
 
     const getTmp = (msg) => {
@@ -78,11 +79,10 @@
     sendRoom.addEventListener('click', () => {
         console.log('listener');
         socket.emit('message-to-room', {
-            username: userName,
+            username: "<%= userName  %>",
             text: inputText.value,
         })
     })
-
 
 </script>
 

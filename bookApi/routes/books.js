@@ -38,12 +38,15 @@ router.post('/create',  async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
+  console.log(':id '+ req.user);
   const { id } = req.params;
   try {
     const book = await Book.findById(id).select('-__v');
     await axios.post(`http://host.docker.internal/counter/${id}/incr`)
     const resp = await axios.get(`http://host.docker.internal/counter/${id}`)
-    await res.render('book/view', { title: 'Book', book: book, count: resp.data });
+    let userName = req.user ? req.user.displayName : "anonymous";
+    console.log(48 + userName);
+    await res.render('book/view', { title: 'Book', book: book, count: resp.data,userName: userName });
   } catch (e) {
     res.status(500).json(e);
   }

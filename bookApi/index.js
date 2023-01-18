@@ -34,23 +34,19 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 
-
 app.use('/', indexRouter);
 app.use('/api', apiRouter);
 app.use('/api/user', apiUser);
 app.use('/api/books', apiBooksRouter);
+app.use(errorMiddleware);
 
 io.on('connection', (socket) => {
     const {id} = socket;
-    console.log(`Socket connected: ${id}`);
-
     // работа с комнатами
     const {roomName} = socket.handshake.query;
-    console.log(`Socket roomName: ${roomName}`);
     //подписываемся на событие комнаты
     socket.join(roomName);
     socket.on('message-to-room', (msg) => {
-        console.log('on '+msg)
         msg.type = `room: ${roomName}`;
         socket.to(roomName).emit('message-to-room', msg);
         socket.emit('message-to-room', msg);
@@ -78,5 +74,4 @@ async function start(PORT, UrlDB) {
 
 const UrlDB = process.env.UrlDB || 'mongodb://root:example@mongo:27017/';
 const PORT = process.env.PORT || 3002;
-app.use(errorMiddleware);
 start(PORT, UrlDB);

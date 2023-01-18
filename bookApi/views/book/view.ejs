@@ -77,7 +77,6 @@
     });
 
     sendRoom.addEventListener('click', () => {
-        console.log('listener');
         socket.emit('message-to-room', {
             username: "<%= userName  %>",
             text: inputText.value,

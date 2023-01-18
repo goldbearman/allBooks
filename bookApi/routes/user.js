@@ -50,7 +50,6 @@ passport.deserializeUser((id, cb) => {
 });
 
 router.get('/', (req, res) => {
-  console.log(req.user);
   res.render('user/home', {user: req.user})
 })
 

@@ -6,12 +6,17 @@ const Book = require('../models/book');
 const router = exptress.Router();
 const { v4: uuid } = require('uuid');
 const fileMulter = require('../middleware/bookfile')
+//IoC
+const { invContainer } = require("../container");
+const { BooksRepository } = require("../classes/bookAbstract");
 
+const bookRepo = invContainer.get(BooksRepository);
 
 router.get('/', async (req, res) => {
 
   try {
-    const books = await Book.find().select('-__v');
+    const books = await bookRepo.getBooks();
+    // const books = await Book.find().select('-__v');
     res.render('book/index', { title: 'Books', books: books });
   } catch (e) {
     res.status(500).json(e);
@@ -25,11 +30,12 @@ router.get('/create', (req, res) => {
   });
 });
 
-router.post('/create',  async (req, res) => {
-  const {title, desc} = req.body;
+router.post('/create', async (req, res) => {
+  const { title, desc } = req.body;
   try {
-    const book = new Book({title, description:desc});
-    await book.save();
+    const book = await new Book({ title, description: desc });
+    const books = bookRepo.createBook(book);
+    // await book.save();
 
     res.redirect('/api/books');
   } catch (e) {
@@ -40,11 +46,12 @@ router.post('/create',  async (req, res) => {
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const book = await Book.findById(id).select('-__v');
+    const book = await bookRepo.getBook(id);
+    // const book = await Book.findById(id).select('-__v');
     await axios.post(`http://host.docker.internal/counter/${id}/incr`)
     const resp = await axios.get(`http://host.docker.internal/counter/${id}`)
     let userName = req.user ? req.user.displayName : "anonymous";
-    await res.render('book/view', { title: 'Book', book: book, count: resp.data,userName: userName });
+    await res.render('book/view', { title: 'Book', book: book, count: resp.data, userName: userName });
   } catch (e) {
     res.status(500).json(e);
   }
@@ -53,7 +60,8 @@ router.get('/:id', async (req, res) => {
 router.get('/update/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const book = await Book.findById(id).select('-__v');
+    const book = await bookRepo.getBook(id);
+    // const book = await Book.findById(id).select('-__v');
     await res.render('book/update', { title: 'Update book', book: book });
   } catch (e) {
     res.status(500).json(e);
@@ -65,7 +73,8 @@ router.post('/update/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    const book = await Book.findByIdAndUpdate(id, { title, description:desc }).select('-__v');
+    const book = await bookRepo.updateBook(id);
+    // const book = await Book.findByIdAndUpdate(id, { title, description:desc }).select('-__v');
     await res.redirect('/api/books')
   } catch (e) {
     res.status(500).json(e);
@@ -75,7 +84,8 @@ router.post('/update/:id', async (req, res) => {
 router.post('/delete/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    await Book.deleteOne({ _id: id })
+    await bookRepo.deleteBook(id);
+    // await Book.deleteOne({ _id: id })
     await res.redirect('/api/books')
   } catch (e) {
     res.status(500).json(e);
@@ -132,7 +142,8 @@ router.put('/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    const book = await Book.findByIdAndUpdate(id, { title, description }).select('-__v');
+    const book = await bookRepo.updateBook(id);
+    // const book = await Book.findByIdAndUpdate(id, { title, description }).select('-__v');
     await res.json(book);
   } catch (e) {
     res.status(500).json(e);
@@ -143,7 +154,8 @@ router.delete('/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    await Book.deleteOne({ _id: id })
+    bookRepo.deleteBook(id);
+    // await Book.deleteOne({ _id: id })
     await res.json(true)
   } catch (e) {
     res.status(500).json(e);

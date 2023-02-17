@@ -16,7 +16,6 @@ router.get('/', async (req, res) => {
 
   try {
     const books = await bookRepo.getBooks();
-    // const books = await Book.find().select('-__v');
     res.render('book/index', { title: 'Books', books: books });
   } catch (e) {
     res.status(500).json(e);
@@ -47,7 +46,6 @@ router.get('/:id', async (req, res) => {
   const { id } = req.params;
   try {
     const book = await bookRepo.getBook(id);
-    // const book = await Book.findById(id).select('-__v');
     await axios.post(`http://host.docker.internal/counter/${id}/incr`)
     const resp = await axios.get(`http://host.docker.internal/counter/${id}`)
     let userName = req.user ? req.user.displayName : "anonymous";
@@ -61,7 +59,6 @@ router.get('/update/:id', async (req, res) => {
   const { id } = req.params;
   try {
     const book = await bookRepo.getBook(id);
-    // const book = await Book.findById(id).select('-__v');
     await res.render('book/update', { title: 'Update book', book: book });
   } catch (e) {
     res.status(500).json(e);
@@ -74,7 +71,6 @@ router.post('/update/:id', async (req, res) => {
 
   try {
     const book = await bookRepo.updateBook(id);
-    // const book = await Book.findByIdAndUpdate(id, { title, description:desc }).select('-__v');
     await res.redirect('/api/books')
   } catch (e) {
     res.status(500).json(e);
@@ -85,7 +81,6 @@ router.post('/delete/:id', async (req, res) => {
   const { id } = req.params;
   try {
     await bookRepo.deleteBook(id);
-    // await Book.deleteOne({ _id: id })
     await res.redirect('/api/books')
   } catch (e) {
     res.status(500).json(e);
@@ -143,7 +138,6 @@ router.put('/:id', async (req, res) => {
 
   try {
     const book = await bookRepo.updateBook(id);
-    // const book = await Book.findByIdAndUpdate(id, { title, description }).select('-__v');
     await res.json(book);
   } catch (e) {
     res.status(500).json(e);
@@ -155,7 +149,6 @@ router.delete('/:id', async (req, res) => {
 
   try {
     bookRepo.deleteBook(id);
-    // await Book.deleteOne({ _id: id })
     await res.json(true)
   } catch (e) {
     res.status(500).json(e);

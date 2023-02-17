@@ -1,27 +1,26 @@
-const express = require('express');
-const mongoose = require('mongoose');
+import express from 'express';
+import mongoose from 'mongoose';
 
-const session = require('express-session')
-const passport = require('passport')
+import session from 'express-session';
+import passport from 'passport';
 
-const errorMiddleware = require('./middleware/error');
-
-const indexRouter = require('./routes/index');
-const apiRouter = require('./routes/apiBooks');
-const apiUser = require('./routes/user');
-const apiBooksRouter = require('./routes/books');
+import errorMiddleware  from './src/middleware/error';
+import indexRouter  from './src/routes/index';
+import apiRouter  from './src/routes/apiBooks';
+import apiUser  from './src/routes/user';
+import apiBooksRouter from './routes/books';
 //Chart
-const http = require('http');
-const socketIO = require('socket.io');
+import http from 'http';
+import socketIO from 'socket.io';
 
 const app = express();
 const server = http.Server(app);
 const io = socketIO(server);
 
-const bodyParser = require('body-parser')
+import bodyParser from 'body-parser';
 
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({extended: false}))
+app.use(bodyParser.urlencoded({extended: false}))  //обработка форм
 
 app.use(express.urlencoded({extended: true}));
 app.set('view engine', 'ejs');

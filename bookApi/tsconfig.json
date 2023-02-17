@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
     "target": "es5",
     "lib": ["es6", "dom"],
     "types": ["reflect-metadata"],

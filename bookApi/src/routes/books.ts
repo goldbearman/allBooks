@@ -1,14 +1,14 @@
-const exptress = require('express');
-const path = require('path');
-const axios = require('axios');
-const Book = require('../models/book');
+import {Router} from 'express';
+import path from 'path';
+import axios from 'axios';
+import Book from '../models/book';
 
-const router = exptress.Router();
-const { v4: uuid } = require('uuid');
-const fileMulter = require('../middleware/bookfile')
+import router = Router();
+import { v4: uuid } from 'uuid';
+import fileMulter from '../middleware/bookfile';
 //IoC
-const { invContainer } = require("../container");
-const { BooksRepository } = require("../classes/bookAbstract");
+import { invContainer } from "../container";
+import { BooksRepository } from "../classes/bookAbstract";
 
 const bookRepo = invContainer.get(BooksRepository);
 
@@ -162,4 +162,4 @@ function keyComparison(bookExample, book) {
   });
 }
 
-module.exports = router;
+export default router;

@@ -1,22 +1,26 @@
+import {Iuser} from "../user/iuser";
+
 const exptress = require('express');
+import {Error} from 'mongoose';
+import {Request, Response, NextFunction} from 'express'
 const router = exptress.Router();
 
 const bcrypt = require('bcrypt');
 
-const User = require('../models/user')
+const User = require('../user/user')
 
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
 
-verifyPassword = (user, password) => {
+const verifyPassword = (user:Iuser, password:string):boolean => {
   console.log('verifyPassword')
     return bcrypt.compareSync(password, user.password);
 };
 
-const verify = (username, password, done) => {
+const verify = (username:string, password:string, done:any) => {
   console.log('verify');
   console.log(username, password)
-  User.findOne({username}, (err, user) => {
+  User.findOne({username}, (err:Error, user:Iuser) => {
     console.log(user);
     if (err) {
       console.log(err);
@@ -43,14 +47,14 @@ const options = {
 
 passport.use('local', new LocalStrategy(options, verify))
 
-passport.serializeUser((user, cb) => {
+passport.serializeUser((user:Iuser, cb:any) => {
   console.log('serializeUser');
   cb(null, user.id)
 });
 
-passport.deserializeUser((id, cb) => {
+passport.deserializeUser((id:string, cb:any) => {
   console.log('deserializeUser');
-  User.findById(id, (err, user) => {
+  User.findById(id, (err:Error, user:Iuser) => {
     if (err) {
       console.log(err);
       return cb(err)
@@ -60,40 +64,26 @@ passport.deserializeUser((id, cb) => {
   })
 });
 
-router.get('/', (req, res) => {
+router.get('/', (req: Request, res: Response) => {
   res.render('user/home', {user: req.user})
 })
 
-router.get('/login', (req, res) => {
+router.get('/login', (req: Request, res: Response) => {
   res.render('user/login')
 });
 
-router.get('/signup', (req, res) => {
+router.get('/signup', (req: Request, res: Response) => {
   res.render('user/signup')
 });
 
-// router.post('/login',
-//   passport.authenticate('local', {failureRedirect: 'api/user/err',failureMessage: true}),
-//   async (req, res) => {
-//     console.log('in login')
-//     res.json(req.user);
-//   });
-
-router.post('/login', function(req, res, next) {
-  passport.authenticate('local', function(err, user, info) {
+router.post('/login', function(req: Request, res: Response, next:NextFunction  ) {
+  passport.authenticate('local', function(err:Error, user:Iuser) {
     if (err) {
       return next(err); // will generate a 500 error
     }
-    // Generate a JSON response reflecting authentication status
     if (! user) {
       return res.send({ success : false, message : 'authentication failed' });
     }
-    // ***********************************************************************
-    // "Note that when using a custom callback, it becomes the application's
-    // responsibility to establish a session (by calling req.login()) and send
-    // a response."
-    // Source: http://passportjs.org/docs
-    // ***********************************************************************
     req.login(user, loginErr => {
       if (loginErr) {
         return next(loginErr);
@@ -103,18 +93,7 @@ router.post('/login', function(req, res, next) {
   })(req, res, next);
 });
 
-
-
-
-
-
-
-// router.get('/err',
-//   async (req, res) => {
-//     res.json({err:'Неверный логин или пароль'});
-//   });
-
-router.post('/signup', async (req, res, next) => {
+router.post('/signup', async (req: Request, res: Response, next:NextFunction) => {
   try {
     const {username, password, displayName, email} = req.body;
     const hash = await bcrypt.hash(password, 10);
@@ -131,7 +110,7 @@ router.post('/signup', async (req, res, next) => {
   }
 });
 
-router.get('/logout', (req, res) => {
+router.get('/logout', (req: Request, res: Response, next:NextFunction) => {
   req.logout(function (err) {
     if (err) {
       return next(err);
@@ -141,37 +120,16 @@ router.get('/logout', (req, res) => {
 });
 
 router.get('/me',
-  (req, res, next) => {
+  (req: Request, res: Response, next:NextFunction) => {
     if (!req.isAuthenticated()) {
       return res.redirect('/api/user/login')
     }
     next()
   },
-  (req, res) => {
+  (req: Request, res: Response) => {
     res.render('user/profile', {user: req.user})
   }
 )
-module.exports = router;
 
-function authenticate(strategy, options) {
-  return function (req, res, next) {
-    passport.authenticate(strategy, options, (error, user , info) => {
-      if (error) {
-        return next(error);
-      }
-      if (!user) {
-        return next(new TranslatableError('unauthorised', HTTPStatus.UNAUTHORIZED));
-      }
-      if (options.session) {
-        return req.logIn(user, (err) => {
-          if (err) {
-            return next(err);
-          }
-          return next();
-        });
-      }
-      req.user = user;
-      next();
-    })(req, res, next);
-  };
-}
+export {router as apiUser};
+

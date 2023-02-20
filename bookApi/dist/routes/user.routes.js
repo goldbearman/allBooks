@@ -45,24 +45,17 @@ var User = require('../user/user');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var verifyPassword = function (user, password) {
-    console.log('verifyPassword');
     return bcrypt.compareSync(password, user.password);
 };
 var verify = function (username, password, done) {
-    console.log('verify');
-    console.log(username, password);
     User.findOne({ username: username }, function (err, user) {
-        console.log(user);
         if (err) {
-            console.log(err);
             return done(err);
         }
         if (!user) {
-            console.log('!user');
             return done(null, false, { message: 'Incorrect username or password.' });
         }
         if (!verifyPassword(user, password)) {
-            console.log('!verifyPassword');
             return done(null, false);
         }
         return done(null, user);
@@ -74,17 +67,13 @@ var options = {
 };
 passport.use('local', new LocalStrategy(options, verify));
 passport.serializeUser(function (user, cb) {
-    console.log('serializeUser');
     cb(null, user.id);
 });
 passport.deserializeUser(function (id, cb) {
-    console.log('deserializeUser');
     User.findById(id, function (err, user) {
         if (err) {
-            console.log(err);
             return cb(err);
         }
-        console.log(user);
         cb(null, user);
     });
 });

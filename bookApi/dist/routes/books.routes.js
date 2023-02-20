@@ -41,8 +41,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express = require('express');
 require("reflect-metadata");
+var path_1 = __importDefault(require("path"));
 var axios_1 = __importDefault(require("axios"));
+var book_model_1 = __importDefault(require("../book/book.model"));
 var rout = express.Router();
+var uuid_1 = require("uuid");
+var bookfile_1 = __importDefault(require("../middleware/bookfile"));
 //IoC
 var container_1 = require("../infrastructure/container");
 var bookAbstract_1 = require("../book/bookAbstract");
@@ -109,7 +113,6 @@ rout.get('/:id', function (req, res) { return __awaiter(void 0, void 0, void 0, 
                 return [4 /*yield*/, bookRepo.getBook(id)];
             case 2:
                 book = _a.sent();
-                console.log(book);
                 return [4 /*yield*/, axios_1.default.post("http://host.docker.internal/counter/".concat(id, "/incr"))];
             case 3:
                 _a.sent();
@@ -164,7 +167,6 @@ rout.post('/update/:id', function (req, res) { return __awaiter(void 0, void 0, 
             case 0:
                 _a = req.body, title = _a.title, desc = _a.desc;
                 id = req.params.id;
-                console.log(title, desc, id);
                 _b.label = 1;
             case 1:
                 _b.trys.push([1, 4, , 6]);
@@ -216,44 +218,51 @@ rout.post('/user/login', function (req, res) {
     res.status(201);
     res.json(regObj);
 });
-// rout.get('/:id/download', (req: Request, res: Response) => {
-//     const {books} = stor;
-//     const {id} = req.params;
-//     const book = books.find(el => el.id === id);
-//     if (book) {
-//         const file = path.join(__dirname, '..', book.fileBook);
-//         res.download(file, book.fileName);
-//     } else {
-//         res.json('Запрашиваемый ресурс не найден!')
-//     }
-// });
-//
-// rout.post('/download',
-//     fileMulter.single('bookFile'),    //(ожидаемое имя файла)
-//     (req: Request, res: Response) => {
-//         if (req.file) {
-//             const {path} = req.file
-//             if (req.body.bookFile) {
-//                 try {
-//                     const newBook = JSON.parse(req.body.bookFile);
-//                     newBook.fileBook = path;
-//                     newBook.id = uuid();
-//                     if (!keyComparison(new BookModel(), newBook)) {         //Проверка наличия всех полей
-//                         res.json('Не хватает данных в книге!');
-//                     } else {
-//                         const isNewBook = stor.books.every(el => el.title !== newBook.title && el.authors !== newBook.authors);
-//                         if (isNewBook) {                                  //Проверка дублирующей книги
-//                             stor.books.push(newBook);
-//                             res.json({path})
-//                         } else res.json('Данная книга уже есть!');
-//                     }
-//                 } catch (e) {
-//                     res.json('Неверная структура данных!');
-//                 }
-//             } else res.json('Неверная структура данных!');
-//         } else res.json('Нет файла книги!');
-//         res.json()
-//     });
+rout.get('/:id/download', function (req, res) {
+    var books = stor.books;
+    var id = req.params.id;
+    var book = books.find(function (el) { return el.id === id; });
+    if (book) {
+        var file = path_1.default.join(__dirname, '..', book.fileBook);
+        res.download(file, book.fileName);
+    }
+    else {
+        res.json('Запрашиваемый ресурс не найден!');
+    }
+});
+rout.post('/download', bookfile_1.default.single('bookFile'), //(ожидаемое имя файла)
+function (req, res) {
+    if (req.file) {
+        var path_2 = req.file.path;
+        if (req.body.bookFile) {
+            try {
+                var newBook_1 = JSON.parse(req.body.bookFile);
+                newBook_1.fileBook = path_2;
+                newBook_1.id = (0, uuid_1.v4)();
+                if (!keyComparison(new book_model_1.default(), newBook_1)) { //Проверка наличия всех полей
+                    res.json('Не хватает данных в книге!');
+                }
+                else {
+                    var isNewBook = stor.books.every(function (el) { return el.title !== newBook_1.title && el.authors !== newBook_1.authors; });
+                    if (isNewBook) { //Проверка дублирующей книги
+                        stor.books.push(newBook_1);
+                        res.json({ path: path_2 });
+                    }
+                    else
+                        res.json('Данная книга уже есть!');
+                }
+            }
+            catch (e) {
+                res.json('Неверная структура данных!');
+            }
+        }
+        else
+            res.json('Неверная структура данных!');
+    }
+    else
+        res.json('Нет файла книги!');
+    res.json();
+});
 rout.put('/:id', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, title, description, id, book, e_7;
     return __generator(this, function (_b) {

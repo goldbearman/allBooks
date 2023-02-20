@@ -6,7 +6,7 @@ import passport from 'passport';
 
 import { errorMiddleware } from './middleware/error';
 import indexRouter from './routes/index';
-import {apiRouter} from './routes/apiBooks';
+import {apiRouter} from './routes/apiBooks.routes';
 import { apiUser } from './routes/user.routes';
 import apiBooksRouter from './routes/books.routes';
 //Chart

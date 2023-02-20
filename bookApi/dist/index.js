@@ -45,7 +45,7 @@ var express_session_1 = __importDefault(require("express-session"));
 var passport_1 = __importDefault(require("passport"));
 var error_1 = require("./middleware/error");
 var index_1 = __importDefault(require("./routes/index"));
-var apiBooks_1 = require("./routes/apiBooks");
+var apiBooks_routes_1 = require("./routes/apiBooks.routes");
 var user_routes_1 = require("./routes/user.routes");
 var books_routes_1 = __importDefault(require("./routes/books.routes"));
 //Chart
@@ -67,7 +67,7 @@ app.use((0, express_session_1.default)({
 app.use(passport_1.default.initialize());
 app.use(passport_1.default.session());
 app.use('/', index_1.default);
-app.use('/api', apiBooks_1.apiRouter);
+app.use('/api', apiBooks_routes_1.apiRouter);
 app.use('/api/user', user_routes_1.apiUser);
 app.use('/api/books', books_routes_1.default);
 app.use(error_1.errorMiddleware);

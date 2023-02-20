@@ -1,11 +1,13 @@
 import {Ibook} from "./ibook";
 import BookModel from './book.model';
+import {injectable} from "inversify";
 
 interface CreateBook {
     title: Ibook['title'];
     description: Ibook['description'];
 }
 
+@injectable()
 export abstract class BooksRepository {
     async createBook(data: CreateBook): Promise<Ibook> {
         const newBook = await new BookModel(data);
@@ -22,7 +24,7 @@ export abstract class BooksRepository {
     };
 
     async updateBook(id: string, data: CreateBook): Promise<Ibook | null> {
-        return await BookModel.findByIdAndUpdate(id, {data}).exec();
+        return await BookModel.findByIdAndUpdate(id, data).exec();
     };
 
     async deleteBook(id: string): Promise<void> {

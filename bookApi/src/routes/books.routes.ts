@@ -1,5 +1,6 @@
 import {Request, Response} from 'express'
 const express = require('express');
+import 'reflect-metadata'
 import path from 'path';
 import axios from 'axios';
 import BookModel from '../book/book.model';
@@ -33,9 +34,9 @@ rout.get('/create', (req: Request, res: Response) => {
 });
 
 rout.post('/create', async (req: Request, res: Response) => {
-    const {title, description} = req.body;
+    const {title, desc} = req.body;
     try {
-        const book = bookRepo.createBook({title, description});
+        const book = bookRepo.createBook({title, description:desc});
         res.redirect('/api/books');
     } catch (e) {
         await res.status(500).json(e);
@@ -46,7 +47,8 @@ rout.get('/:id', async (req: IGetUserAuthInfoRequest, res: Response) => {
     const {id} = req.params;
     const {user} = req;
     try {
-        const book = bookRepo.getBook(id);
+        const book = await bookRepo.getBook(id);
+        console.log(book);
         await axios.post(`http://host.docker.internal/counter/${id}/incr`)
         const resp = await axios.get(`http://host.docker.internal/counter/${id}`)
         let userName = user ? user.displayName : "anonymous";
@@ -69,6 +71,7 @@ rout.get('/update/:id', async (req: Request, res: Response) => {
 rout.post('/update/:id', async (req: Request, res: Response) => {
     const {title, desc} = req.body;
     const {id} = req.params;
+    console.log(title, desc, id);
 
     try {
         const book = await bookRepo.updateBook(id, {title, description: desc});
